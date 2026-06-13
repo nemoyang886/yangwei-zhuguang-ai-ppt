@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我为什么来泰康，又为什么继续留下来 · 杨威</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ============ 主题色(默认:🖋 墨水经典) ============
+       切换主题:从 references/themes.md 复制对应的 :root 块
+       整体替换这几行(--ink / --ink-rgb / --paper / --paper-rgb)
+       其他地方散落的 rgba() 都走 var(--ink-rgb) / var(--paper-rgb),无需逐处改 */
+    --ink:#0a0a0b;
+    --ink-rgb:10,10,11;
+    --paper:#f1efea;
+    --paper-rgb:241,239,234;
+    --paper-tint:#e8e5de;
+    --ink-tint:#18181a;
+
+    /* ============ 字体(跨主题固定) ============ */
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --serif-en:"Playfair Display","Source Serif 4",Georgia,serif;
+    --serif-body-en:"Source Serif 4",Georgia,serif;
+    --serif-zh:"Noto Serif SC",source-han-serif-sc,serif;
+    --sans-zh:"Noto Sans SC",source-han-sans-sc,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);color:var(--paper);font-family:var(--sans-zh);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+  /* ============ WebGL 双背景 ============ */
+  canvas.bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;transition:opacity 1.2s ease}
+  canvas#bg-light{opacity:0}
+  canvas#bg-dark{opacity:1}
+  body.light-bg canvas#bg-light{opacity:1}
+  body.light-bg canvas#bg-dark{opacity:0}
+  body.low-power canvas.bg{display:none!important}
+
+  /* ============ Deck 容器 + 翻页 ============ */
+  /* width: NSLIDES * 100vw，会在 JS 里动态矫正 */
+  #deck{position:fixed;inset:0;width:10000vw;height:100vh;display:flex;flex-wrap:nowrap;transition:transform .9s cubic-bezier(.77,0,.175,1);z-index:10;will-change:transform}
+  .slide{width:100vw;height:100vh;flex:0 0 100vw;position:relative;padding:6vh 6vw 10vh 6vw;display:flex;flex-direction:column;overflow:hidden}
+  .slide.light{color:var(--ink);background:var(--paper)}
+  .slide.dark{color:var(--paper);background:var(--ink)}
+
+  /* 默认页：遮罩较厚，保证文字可读 */
+  .slide::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;transition:background .7s ease}
+  .slide.light::before{background:rgba(var(--paper-rgb),.78);backdrop-filter:blur(3px)}
+  .slide.dark::before{background:rgba(var(--ink-rgb),.78);backdrop-filter:blur(3px)}
+  /* Hero 页：遮罩大幅降低，让 WebGL 背景明显透出 */
+  .slide.hero.light::before{background:rgba(var(--paper-rgb),.16);backdrop-filter:none}
+  .slide.hero.dark::before{background:rgba(var(--ink-rgb),.12);backdrop-filter:none}
+  /* Hero 页顶底微弱渐隐，保证 chrome/foot 区域可读 */
+  .slide.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+  .slide.hero.light::after{background:linear-gradient(180deg,rgba(var(--paper-rgb),.28) 0%,rgba(var(--paper-rgb),0) 14%,rgba(var(--paper-rgb),0) 86%,rgba(var(--paper-rgb),.28) 100%)}
+  .slide.hero.dark::after{background:linear-gradient(180deg,rgba(var(--ink-rgb),.32) 0%,rgba(var(--ink-rgb),0) 14%,rgba(var(--ink-rgb),0) 86%,rgba(var(--ink-rgb),.32) 100%)}
+
+  /* ============ Magazine chrome：顶部 meta + 底部 foot ============ */
+  .chrome{display:flex;justify-content:space-between;align-items:flex-start;font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+  .chrome .left,.chrome .right{display:flex;gap:2.4em;align-items:center}
+  .chrome .sep{width:40px;height:1px;background:currentColor;opacity:.4}
+  .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.55}
+  .foot .title{font-family:var(--serif-zh);font-weight:400;letter-spacing:.05em;text-transform:none;opacity:.75;font-size:13px}
+
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;padding:6px 14px;border:1px solid currentColor;opacity:.85}
+  .rule{width:100%;height:1px;background:currentColor;opacity:.25;margin:3vh 0}
+  .rule.v{width:1px;height:100%;margin:0}
+
+  /* ============ 字体规则 ============
+     · 衬线（Noto Serif SC / Playfair）：大标题、重点金句、数字
+     · 非衬线（Noto Sans SC）：正文描述、body、补充说明
+     · 等宽（IBM Plex Mono）：kicker、meta 小标签、foot 右侧
+  */
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;margin-bottom:2.6vh}
+  .display{font-family:var(--serif-en);font-weight:700;font-size:11vw;line-height:.92;letter-spacing:-.025em}
+  .display-zh{font-family:var(--serif-zh);font-weight:700;font-size:7.8vw;line-height:1.04;letter-spacing:-.005em}
+  .h1-zh{font-family:var(--serif-zh);font-weight:700;font-size:4.6vw;line-height:1.12;letter-spacing:-.005em}
+  .h2-zh{font-family:var(--serif-zh);font-weight:600;font-size:3.2vw;line-height:1.2;letter-spacing:0}
+  .h3-zh{font-family:var(--serif-zh);font-weight:500;font-size:1.9vw;line-height:1.35}
+  .body-zh{font-family:var(--sans-zh);font-weight:400;font-size:max(15px,1.22vw);line-height:1.75;opacity:.82;letter-spacing:.01em}
+  .body-serif{font-family:var(--serif-zh);font-weight:400;font-size:max(15px,1.3vw);line-height:1.65;opacity:.88}
+  .lead{font-family:var(--serif-zh);font-weight:400;font-size:1.9vw;line-height:1.4;opacity:.85}
+  .meta{font-family:var(--mono);font-size:max(11px,.88vw);letter-spacing:.16em;text-transform:uppercase;opacity:.6}
+  .big-num{font-family:var(--serif-en);font-weight:800;font-size:10vw;line-height:.85;letter-spacing:-.03em;font-feature-settings:"tnum"}
+  .mid-num{font-family:var(--serif-en);font-weight:700;font-size:5.5vw;line-height:.88;letter-spacing:-.02em;font-feature-settings:"tnum"}
+  .ghost{font-family:var(--serif-en);font-weight:900;font-size:34vw;line-height:.8;opacity:.06;letter-spacing:-.04em;position:absolute;font-feature-settings:"tnum"}
+  em{font-style:italic;font-family:var(--serif-en)}
+  .en{font-family:var(--serif-en);font-style:italic;font-weight:500}
+
+  /* ============ 布局工具 ============ */
+  .col{display:flex;flex-direction:column;gap:2.4vh}
+  .row{display:flex;align-items:center;gap:3vw}
+  .grid-6{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:4vw 6vw;flex:1;align-content:center;padding:2vh 0}
+  .grid-9{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3vh 4vw;flex:1;align-content:center}
+  .grid-4{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:4vh 6vw;flex:1;align-content:center}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:4vw;flex:1;align-content:center}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:4vw;flex:1;align-items:center}
+  .split-55{display:grid;grid-template-columns:55fr 45fr;gap:5vw;flex:1;align-items:stretch}
+  .fill{flex:1}
+  .center{align-items:center;justify-content:center;text-align:center}
+  .bottom-left{position:absolute;left:6vw;bottom:9vh;max-width:50vw}
+  .bottom-right{position:absolute;right:6vw;bottom:9vh;max-width:50vw;text-align:right}
+  .top-right{position:absolute;right:6vw;top:6vh;text-align:right}
+
+  /* ============ Stat（数字矩阵） ============ */
+  .stat{display:flex;flex-direction:column;gap:1vh;align-items:flex-start}
+  .stat .n{font-family:var(--serif-en);font-weight:800;font-size:8vw;line-height:.88;letter-spacing:-.03em;font-feature-settings:"tnum"}
+  .stat .l{font-family:var(--sans-zh);font-size:max(13px,1.05vw);opacity:.7;margin-top:1vh;font-weight:400;line-height:1.5}
+  .stat .m{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;opacity:.5;margin-bottom:.2vh}
+
+  /* ============ Callout（引用框） ============ */
+  .callout{padding:3vh 2.4vw;border-left:3px solid currentColor;position:relative;font-family:var(--serif-zh);font-size:max(15px,1.2vw);line-height:1.55;opacity:.92}
+  .slide.light .callout{background:rgba(var(--ink-rgb),.05)}
+  .slide.dark .callout{background:rgba(var(--paper-rgb),.06)}
+  .callout .cite{display:block;margin-top:1.6vh;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.6}
+  .callout .q-big{font-family:var(--serif-zh);font-weight:600;font-size:max(17px,1.6vw);line-height:1.42}
+
+  /* ============ Platform（平台卡） ============ */
+  .plat{display:flex;flex-direction:column;justify-content:flex-end;padding:2vh 0;border-top:1px solid currentColor;border-color:rgba(127,127,127,.35)}
+  .plat .name{font-family:var(--serif-zh);font-weight:700;font-size:1.8vw;margin-bottom:.6vh}
+  .plat .nb{font-family:var(--serif-en);font-weight:700;font-size:3.2vw;letter-spacing:-.02em;line-height:1;font-feature-settings:"tnum"}
+  .plat .sub{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.55;margin-top:.6vh}
+  .plat .fill{font-family:var(--sans-zh);font-weight:300;font-size:2.4vw;opacity:.28;letter-spacing:-.01em;line-height:1}
+
+  /* ============ Rowline（表格行） ============ */
+  .rowline{display:grid;grid-template-columns:1fr 2fr 1fr;gap:2vw;padding:2.2vh 0;border-top:1px solid currentColor;align-items:center;border-color:rgba(127,127,127,.25)}
+  .rowline:last-child{border-bottom:1px solid currentColor;border-color:rgba(127,127,127,.25)}
+  .rowline .k{font-family:var(--serif-zh);font-weight:700;font-size:1.7vw}
+  .rowline .v{font-family:var(--sans-zh);font-weight:400;font-size:max(14px,1.2vw);opacity:.85;line-height:1.55}
+  .rowline .m{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;justify-self:end}
+
+  /* ============ Pillar（支柱卡片） ============ */
+  .pillar{display:flex;flex-direction:column;gap:1.8vh}
+  .pillar .ic{font-family:var(--serif-en);font-style:italic;font-size:2.6vw;opacity:.45;font-weight:400}
+  .pillar .ic svg{width:2.8vw;height:2.8vw;stroke-width:1.2;opacity:.7}
+  .pillar .t{font-family:var(--serif-zh);font-weight:700;font-size:2.4vw;line-height:1.1}
+  .pillar .d{font-family:var(--sans-zh);font-weight:400;font-size:max(14px,1.1vw);opacity:.76;line-height:1.6}
+
+  /* ============ Signature / Highlight ============ */
+  .sign{font-family:var(--serif-en);font-style:italic;font-weight:500;font-size:2vw;opacity:.7}
+  .hi{position:relative;display:inline}
+  .slide.dark .hi::after{content:"";position:absolute;left:-.1em;right:-.1em;bottom:-.05em;height:.28em;background:rgba(var(--paper-rgb),.15);z-index:-1}
+  .slide.light .hi::after{content:"";position:absolute;left:-.1em;right:-.1em;bottom:-.05em;height:.28em;background:rgba(var(--ink-rgb),.08);z-index:-1}
+
+  /* ============ Icons（Lucide via CDN） ============ */
+  .ico{width:1em;height:1em;display:inline-block;vertical-align:-.12em;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+  .ico-lg,.ico-md,.ico-sm{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+  .ico-lg{width:2.6vw;height:2.6vw;stroke-width:1.2;display:inline-block}
+  .ico-md{width:1.8vw;height:1.8vw;stroke-width:1.3;display:inline-block;vertical-align:-.4em}
+  .ico-sm{width:1.1vw;height:1.1vw;stroke-width:1.4;display:inline-block;vertical-align:-.15em;opacity:.7}
+
+  /* ============ 图片占位（虚线框，提示设计师位置） ============ */
+  .img-slot{border:1.5px dashed rgba(127,127,127,.4);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1vh;padding:2vh 2vw;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;opacity:.55;position:relative;aspect-ratio:16/9;width:100%;max-height:56vh;margin-inline:auto;box-sizing:border-box}
+  .img-slot::before{content:"";position:absolute;inset:8px;border:1px solid currentColor;opacity:.2}
+  .img-slot .plus{font-size:2vw;font-weight:300;opacity:.5;letter-spacing:0}
+  .img-slot .label{position:relative;z-index:2;text-align:center}
+  .img-slot.r-4x3{aspect-ratio:4/3}
+  .img-slot.r-3x2{aspect-ratio:3/2}
+  .img-slot.r-1x1{aspect-ratio:1/1}
+
+  /* ============ 图片实填框（关键：固定高度 + 只裁底部） ============
+     重要约束：高度用内联 height:Nvh 精确控制，不要用 aspect-ratio（会撑破布局）
+     object-position:top center 保证严禁裁剪顶部和左右，只裁剪底部
+  */
+  .frame-img{overflow:hidden;position:relative;background:rgba(0,0,0,.04);box-sizing:border-box;width:100%;border-radius:4px}
+  .slide.dark .frame-img{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+  .frame-img > img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .frame-img.fit-contain > img{object-fit:contain;object-position:center center}
+  .frame-img.r-16x9{aspect-ratio:16/9;max-height:64vh}
+  .frame-img.r-16x10{aspect-ratio:16/10;max-height:56vh}
+  .frame-img.r-4x3{aspect-ratio:4/3;max-height:56vh}
+  .frame-img.r-3x2{aspect-ratio:3/2;max-height:46vh}
+  .frame-img.r-3x4{aspect-ratio:3/4;max-height:60vh}
+  .frame-img.r-1x1{aspect-ratio:1/1;max-height:50vh}
+  .frame-img.h-16{height:16vh}
+  .frame-img.h-18{height:18vh}
+  .frame-img.h-22{height:22vh}
+  .frame-img.h-26{height:26vh}
+  .frame-img.h-28{height:28vh}
+  .frame-cap{display:flex;justify-content:space-between;align-items:baseline;gap:1vw;margin-top:.8vh;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;opacity:.72}
+  .frame-cap .pf{font-family:var(--serif-zh);font-weight:600;font-size:max(13px,1vw);letter-spacing:.04em;text-transform:none;opacity:.94}
+  .frame-cap .nb{font-family:var(--serif-en);font-style:italic;font-size:max(15px,1.2vw);letter-spacing:.02em;text-transform:none;opacity:.88}
+  .frame-cap .idx{font-family:var(--mono);opacity:.5}
+  figure.tile{display:flex;flex-direction:column;margin:0;min-width:0}
+  figure.tile > .frame-img{flex:0 0 auto}
+
+  /* ============ 导航 ============ */
+  #nav{position:fixed;left:50%;bottom:2.6vh;transform:translateX(-50%);z-index:30;display:flex;gap:10px;padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  #nav .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .3s ease;border:0;padding:0}
+  #nav .dot:hover{background:rgba(255,255,255,.5);transform:scale(1.15)}
+  #nav .dot.active{background:rgba(255,255,255,.95);width:22px;border-radius:999px}
+  body.light-bg #nav{background:rgba(255,255,255,.25)}
+  body.light-bg #nav .dot{background:rgba(var(--ink-rgb),.25)}
+  body.light-bg #nav .dot.active{background:rgba(var(--ink-rgb),.9)}
+  #hint{position:fixed;bottom:3vh;right:3vw;z-index:30;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.4;mix-blend-mode:difference;color:#aaa}
+  body.low-power #hint{opacity:.72;color:var(--paper);mix-blend-mode:normal}
+  body.light-bg.low-power #hint{color:var(--ink)}
+
+  /* ============================================================
+     ============ LAYOUTS API · 面向 agent 的类（v2）============
+     所有 layouts.md 中的骨架都基于下面这套命名。
+     如果你在 layouts.md 里看到某个类，它必须在下面有定义。
+     ============================================================ */
+
+  /* ---------- .frame：每页主内容容器 ---------- */
+  .frame{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  /* 当 .frame 同时加了 grid 类时，grid 的 display:grid 覆盖 flex */
+  .frame.grid-2-7-5,
+  .frame.grid-2-6-6,
+  .frame.grid-2-8-4,
+  .frame.grid-3-3,
+  .frame.grid-6{display:grid}
+
+  /* ---------- 标题层级（API 名称，衬线为主） ---------- */
+  .h-hero{
+    font-family:var(--serif-zh);
+    font-weight:900;
+    font-size:10vw;
+    line-height:.96;
+    letter-spacing:-.02em;
+  }
+  .h-xl{
+    font-family:var(--serif-zh);
+    font-weight:700;
+    font-size:6.2vw;
+    line-height:1.08;
+    letter-spacing:-.01em;
+  }
+  .h-sub{
+    font-family:var(--serif-zh);
+    font-weight:500;
+    font-size:3.1vw;
+    line-height:1.25;
+    letter-spacing:0;
+    opacity:.7;
+  }
+  .h-md{
+    font-family:var(--serif-zh);
+    font-weight:600;
+    font-size:2.3vw;
+    line-height:1.3;
+  }
+  /* 英文标题专用（Playfair 衬线） */
+  .h-hero-en,.h-xl-en{font-family:var(--serif-en);letter-spacing:-.025em}
+
+  /* ---------- lead 引语 ---------- */
+  .lead{
+    font-family:var(--serif-zh);
+    font-weight:400;
+    font-size:1.75vw;
+    line-height:1.5;
+    opacity:.86;
+  }
+
+  /* ---------- meta-row 底部元数据 ---------- */
+  .meta-row{
+    display:flex;
+    gap:1.2em;
+    align-items:baseline;
+    flex-wrap:wrap;
+    font-family:var(--mono);
+    font-size:max(12px,.92vw);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    opacity:.6;
+  }
+
+  /* ---------- stat-card（数据大字报用） ---------- */
+  .stat-card{
+    display:flex;
+    flex-direction:column;
+    gap:.8vh;
+    align-items:flex-start;
+    padding-top:1.6vh;
+    border-top:1px solid currentColor;
+    border-color:rgba(127,127,127,.3);
+  }
+  .stat-card .stat-label{
+    font-family:var(--mono);
+    font-size:max(10px,.78vw);
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    opacity:.55;
+  }
+  .stat-card .stat-nb{
+    font-family:var(--serif-en);
+    font-weight:800;
+    font-size:5.8vw;
+    line-height:.9;
+    letter-spacing:-.03em;
+    font-feature-settings:"tnum";
+    margin-top:.4vh;
+  }
+  .stat-card .stat-nb .stat-unit{
+    font-family:var(--serif-zh);
+    font-weight:500;
+    font-size:.38em;
+    letter-spacing:0;
+    opacity:.72;
+    margin-left:.14em;
+  }
+  .stat-card .stat-note{
+    font-family:var(--sans-zh);
+    font-weight:400;
+    font-size:max(13px,1.05vw);
+    line-height:1.5;
+    opacity:.72;
+    margin-top:.6vh;
+  }
+  /* 当 stat-card 用于 grid-4（2x2），数字适度放大；若页面有标题+引文在上方，可内联 style 覆盖为更小值 */
+  .grid-4 .stat-card .stat-nb{font-size:5vw}
+  /* 当只有 3 个，字也可以稍大 */
+  .grid-3 .stat-card .stat-nb{font-size:6.8vw}
+
+  /* ---------- pipeline（流水线） ---------- */
+  .pipeline-section{
+    margin-top:4.4vh;
+    padding-top:2.8vh;
+    border-top:1px dashed rgba(127,127,127,.32);
+  }
+  .pipeline-section:first-of-type{
+    border-top:0;
+    padding-top:0;
+    margin-top:3vh;
+  }
+  .pipeline-label{
+    font-family:var(--mono);
+    font-size:max(11px,.85vw);
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    opacity:.62;
+    margin-bottom:2.2vh;
+  }
+  .pipeline{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1.2vw;
+  }
+  .pipeline[data-cols="3"]{grid-template-columns:repeat(3,1fr)}
+  .pipeline[data-cols="4"]{grid-template-columns:repeat(4,1fr)}
+  .pipeline[data-cols="6"]{grid-template-columns:repeat(6,1fr)}
+  .step{
+    display:flex;
+    flex-direction:column;
+    gap:.8vh;
+    padding-top:1.4vh;
+    border-top:1px solid currentColor;
+    border-color:rgba(127,127,127,.35);
+  }
+  .step-nb{
+    font-family:var(--serif-en);
+    font-style:italic;
+    font-weight:500;
+    font-size:1.15vw;
+    opacity:.45;
+  }
+  .step-title{
+    font-family:var(--sans-zh);
+    font-weight:700;
+    font-size:1.55vw;
+    letter-spacing:.01em;
+    line-height:1.2;
+  }
+  .step-desc{
+    font-family:var(--sans-zh);
+    font-weight:400;
+    font-size:max(12px,.95vw);
+    line-height:1.45;
+    opacity:.72;
+  }
+
+  /* ---------- 网格（layouts.md 所用） ---------- */
+  /* 这些类独立挂到任何容器上都能生效，不依赖 .frame 复合选择器 */
+  .grid-2-7-5{display:grid;grid-template-columns:7fr 5fr;gap:3vw 4vh;align-items:start}
+  .grid-2-6-6{display:grid;grid-template-columns:1fr 1fr;gap:3vw 4vh;align-items:start}
+  .grid-2-8-4{display:grid;grid-template-columns:8fr 4fr;gap:3vw 4vh;align-items:start}
+  .grid-3-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-auto-rows:minmax(0,1fr);
+    gap:2.4vh 2vw;
+  }
+  /* grid-6 已在旧样式里定义为 3x2，这里仅补 align */
+
+  /* ---------- 图片 frame-img（layouts.md 主命名） ---------- */
+  /* 在旧样式里已定义，这里补 img-cap 命名别名与增强 */
+  figure.frame-img{margin:0;display:flex;flex-direction:column;min-width:0}
+  .img-cap{
+    display:block;
+    margin-top:.8vh;
+    font-family:var(--mono);
+    font-size:max(10px,.8vw);
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    opacity:.6;
+  }
+  /* callout src 命名别名 */
+  .callout-src{
+    display:block;
+    margin-top:1.6vh;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    opacity:.6;
+  }
+
+  /* ---------- chrome & foot 补位（layouts.md 简单写法） ---------- */
+  .chrome{font-family:var(--mono);font-size:max(11px,.78vw);letter-spacing:.2em;text-transform:uppercase;opacity:.62}
+  .foot{font-family:var(--mono);font-size:max(11px,.78vw);letter-spacing:.18em;text-transform:uppercase;opacity:.5}
+
+  /* ============ 动效系统(Motion One 驱动) ============
+     所有 [data-anim] 元素默认隐藏,进入页面时由 JS 逐个揭示。
+     - cascade(默认):按 DOM 顺序 stagger 120ms 淡入 + y:16→0
+     - hero(hero 页自动):慢一点的 stagger 180ms
+     - quote(含 [data-anim="line"]):逐行 600ms 淡入
+     - directional(含 [data-anim="left|right"]):左→分隔线→右
+     - pipeline(data-animate="pipeline"):Space/→ 手动推进
+     Motion One 没加载成功时(CDN 断 + 本地丢),所有 [data-anim] 会兜底显示。
+  */
+  [data-anim]{opacity:1}
+  body.motion-ready [data-anim]{opacity:0}
+  body.motion-ready [data-anim="left"]{transform:translateX(-24px)}
+  body.motion-ready [data-anim="right"]{transform:translateX(24px)}
+  body.motion-ready [data-anim="line"]{opacity:0;transform:translateY(10px)}
+  body.motion-ready [data-animate="pipeline"] [data-anim]{opacity:.15}
+  body.low-power #deck{transition:none!important}
+  body.low-power *,
+  body.low-power *::before,
+  body.low-power *::after{animation:none!important;transition:none!important}
+  body.low-power.motion-ready [data-anim],
+  body.low-power [data-anim]{opacity:1!important;transform:none!important}
+
+  /* ---------- 响应式降级 ---------- */
+  @media (max-width:900px){
+    .display{font-size:16vw}
+    .display-zh{font-size:12vw}
+    .h1-zh{font-size:7vw}
+    .h-hero{font-size:14vw}
+    .h-xl{font-size:9vw}
+    .pipeline{grid-template-columns:repeat(2,1fr)}
+    .grid-2-7-5,.grid-2-6-6,.grid-2-8-4{grid-template-columns:1fr}
+  }
+
+
+  /* ============ Custom: Yang Wei Taikang Zhuguang Deck ============ */
+  .yw-frame{flex:1;display:grid;align-content:center;gap:3.6vh;min-height:0;position:relative;z-index:2}
+  .yw-title{font-family:var(--serif-zh);font-weight:800;font-size:4.7vw;line-height:1.12;letter-spacing:-.01em;max-width:72vw}
+  .yw-title.large{font-size:6.4vw;max-width:82vw;line-height:1.05}
+  .yw-title.centered{margin-inline:auto;text-align:center;max-width:86vw}
+  .yw-sub{font-family:var(--sans-zh);font-size:max(17px,1.35vw);line-height:1.75;opacity:.8;max-width:58vw}
+  .goldline{font-family:var(--serif-zh);font-size:max(20px,2vw);line-height:1.48;font-weight:600;max-width:72vw;border-left:3px solid currentColor;padding:2.1vh 2vw;background:rgba(127,127,127,.08)}
+  .goldline.centered{margin-inline:auto;text-align:center;border-left:0;border-top:2px solid currentColor;border-bottom:1px solid currentColor;background:rgba(127,127,127,.055)}
+  .goldline.small{font-size:max(17px,1.45vw);line-height:1.55}
+  .label-row{display:flex;flex-wrap:wrap;gap:.9vw 1vw;margin-top:.4vh}
+  .label-chip{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;border:1px solid currentColor;padding:7px 11px;opacity:.72}
+  .yw-grid-2{display:grid;grid-template-columns:1.02fr .98fr;gap:4.4vw;align-items:center;min-height:66vh}
+  .yw-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4vw;align-items:stretch;margin-top:2vh}
+  .yw-card{border:1px solid currentColor;border-color:rgba(127,127,127,.28);padding:2.4vh 2vw;background:rgba(127,127,127,.055);min-height:24vh;display:flex;flex-direction:column;gap:1.3vh}
+  .yw-card .nb{font-family:var(--serif-en);font-size:4.2vw;line-height:.88;font-weight:800;opacity:.62}
+  .yw-card .t{font-family:var(--serif-zh);font-size:max(19px,1.55vw);font-weight:700;line-height:1.28}
+  .yw-card .d{font-family:var(--sans-zh);font-size:max(14px,1vw);line-height:1.65;opacity:.74}
+  .yw-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2vw;margin-top:2vh}
+  .yw-step{border-top:2px solid currentColor;padding:2vh .8vw 0;min-height:24vh}
+  .yw-step .n{font-family:var(--mono);font-size:12px;letter-spacing:.18em;opacity:.55;margin-bottom:1.2vh}
+  .yw-step .t{font-family:var(--serif-zh);font-size:max(18px,1.45vw);font-weight:700;line-height:1.28;margin-bottom:1vh}
+  .yw-step .d{font-family:var(--sans-zh);font-size:max(13px,.92vw);line-height:1.55;opacity:.75}
+  .metric-panel{display:grid;grid-template-columns:1fr 1fr;gap:2vw;align-items:stretch;margin-top:2vh}
+  .metric-box{padding:3vh 2vw;border:1px solid currentColor;border-color:rgba(127,127,127,.26);background:rgba(127,127,127,.06)}
+  .metric-box .big{font-family:var(--serif-zh);font-size:3.3vw;font-weight:800;line-height:1.12}
+  .metric-box .desc{font-family:var(--sans-zh);font-size:max(15px,1.05vw);line-height:1.7;opacity:.76;margin-top:1.2vh}
+  .evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25vw;align-items:stretch}
+  .evidence-grid figure{margin:0}
+  .evidence-grid .frame-img{height:16vh;border:1px solid rgba(127,127,127,.25)}
+  .portrait-wrap{height:66vh;max-width:38vw;margin-left:auto;border:1px solid rgba(127,127,127,.24);background:rgba(127,127,127,.06);overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+  .portrait-wrap img{height:100%;width:100%;object-fit:cover;object-position:center top;display:block}
+  .logo-wrap{height:35vh;display:flex;align-items:center;justify-content:center;background:rgba(127,127,127,.055);border:1px solid rgba(127,127,127,.22)}
+  .logo-wrap img{max-width:52%;max-height:78%;object-fit:contain;display:block}
+  .big-quote{font-family:var(--serif-zh);font-size:6.7vw;line-height:1.05;font-weight:900;text-align:center;letter-spacing:-.02em}
+  .three-words{display:grid;grid-template-columns:repeat(3,1fr);gap:2vw;margin-top:4vh}
+  .three-words .word{padding:2.8vh 1.6vw;border-top:2px solid currentColor;background:rgba(127,127,127,.06)}
+  .three-words .word b{font-family:var(--serif-zh);font-size:2.8vw;display:block;margin-bottom:1vh}
+  .three-words .word span{font-family:var(--sans-zh);font-size:max(14px,1vw);line-height:1.58;opacity:.74}
+  .chapter-mark{font-family:var(--mono);letter-spacing:.25em;text-transform:uppercase;opacity:.52;font-size:11px}
+  .safe-note{font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;opacity:.42;font-size:10px}
+  .story-cover{display:grid;grid-template-columns:1.1fr .9fr;gap:5vw;align-items:center;min-height:70vh}
+  .story-title{font-family:var(--serif-zh);font-size:5.7vw;line-height:1.08;font-weight:900;letter-spacing:-.02em;max-width:62vw}
+  .story-title.small{font-size:4.8vw;max-width:58vw}
+  .story-title.centered{margin-inline:auto;text-align:center;max-width:84vw}
+  .story-copy{font-family:var(--sans-zh);font-size:max(18px,1.45vw);line-height:1.75;opacity:.78;max-width:48vw}
+  .photo-stage{height:72vh;border:1px solid rgba(127,127,127,.25);overflow:hidden;background:rgba(127,127,127,.06)}
+  .photo-stage img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+  .photo-stage.contain img{object-fit:contain;object-position:center center}
+  .image-stage{height:63vh;border:1px solid rgba(127,127,127,.25);overflow:hidden;background:rgba(127,127,127,.06)}
+  .image-stage img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
+  .image-stage.contain img{object-fit:contain}
+  .image-stage.tall{height:69vh}
+  .image-stage.wide{height:58vh}
+  .image-caption{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.55;margin-top:1vh}
+  .over-photo{position:absolute;left:6vw;bottom:9vh;max-width:54vw;z-index:2}
+  .full-photo{position:absolute;inset:0;z-index:1}
+  .full-photo img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;opacity:.56}
+  .slide.dark .full-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(var(--ink-rgb),.92),rgba(var(--ink-rgb),.55),rgba(var(--ink-rgb),.18));z-index:2}
+  .slide.light .full-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(var(--paper-rgb),.94),rgba(var(--paper-rgb),.62),rgba(var(--paper-rgb),.22));z-index:2}
+  .word-row{display:flex;flex-wrap:wrap;gap:1vw;margin-top:2vh}
+  .word-row span{font-family:var(--serif-zh);font-size:max(22px,2vw);font-weight:700;border-top:2px solid currentColor;padding-top:1vh;min-width:10vw}
+  .one-line{font-family:var(--serif-zh);font-size:max(25px,2.5vw);font-weight:700;line-height:1.35;max-width:68vw}
+  .mini-meta{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.52}
+  .fact-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1vw;margin-top:3vh}
+  .fact{border-top:2px solid currentColor;padding-top:1.2vh}
+  .fact b{font-family:var(--serif-zh);font-size:max(18px,1.45vw);display:block;line-height:1.25}
+  .fact span{font-family:var(--sans-zh);font-size:max(13px,.95vw);line-height:1.5;opacity:.68}
+  .ai-big{display:grid;grid-template-columns:.72fr 1.28fr;gap:3.8vw;align-items:center;min-height:70vh}
+  .ai-big.reverse{grid-template-columns:1.28fr .72fr}
+  .ai-title{font-family:var(--serif-zh);font-size:4.15vw;line-height:1.12;font-weight:850;letter-spacing:-.01em}
+  .ai-note{font-family:var(--sans-zh);font-size:max(16px,1.2vw);line-height:1.68;opacity:.78;margin-top:1.8vh}
+  .tone-note{font-family:var(--serif-zh);font-size:max(21px,1.9vw);line-height:1.5;font-weight:600;max-width:62vw}
+  .logo-stage{height:48vh;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(127,127,127,.18)}
+  .logo-stage img{max-width:72%;max-height:76%;object-fit:contain;display:block}
+  @media(max-width:900px){
+    .story-cover,.ai-big,.ai-big.reverse,.yw-grid-2{grid-template-columns:1fr}
+    .story-title,.story-title.small,.story-copy,.ai-title{max-width:86vw}
+    .photo-stage,.image-stage,.image-stage.tall{height:43vh}
+    .fact-strip{grid-template-columns:repeat(2,1fr)}
+  }
+
+  /* ============ Stage Mode: 黑底大字演讲风 ============ */
+  canvas.bg{opacity:0!important}
+  .slide,
+  .slide.light,
+  .slide.dark,
+  .slide.hero.light,
+  .slide.hero.dark{
+    background:#030303!important;
+    color:#f7f0e6!important;
+  }
+  .slide::before,
+  .slide.light::before,
+  .slide.dark::before,
+  .slide.hero.light::before,
+  .slide.hero.dark::before{
+    background:linear-gradient(180deg,rgba(3,3,3,.96),rgba(3,3,3,.92))!important;
+    backdrop-filter:none!important;
+  }
+  .slide.hero::after{display:none!important}
+  .chrome,.foot{color:#b8afa2!important;opacity:.78}
+  .kicker{color:#d5a24b;opacity:.86;font-weight:600}
+  .story-cover{grid-template-columns:.92fr 1.08fr;gap:4vw}
+  .story-title,
+  .story-title.small,
+  .ai-title{
+    color:#fff8ee;
+    font-size:min(6.35vw,11.2vh);
+    line-height:.98;
+    letter-spacing:-.035em;
+    max-width:60vw;
+  }
+  .story-title.small{font-size:min(5.65vw,10vh)}
+  .story-copy,.ai-note,.yw-sub{
+    color:#d8d1c7;
+    font-size:max(18px,1.45vw);
+    line-height:1.55;
+    opacity:.9;
+  }
+  .goldline{
+    color:#fff6e6;
+    background:rgba(213,162,75,.12);
+    border-left:4px solid #d5a24b;
+    padding:1.6vh 1.7vw;
+    font-size:max(22px,2vw);
+    max-width:66vw;
+  }
+  .goldline.centered{border-top:2px solid #d5a24b;border-bottom:1px solid rgba(213,162,75,.45)}
+  .photo-stage,.image-stage,.logo-stage,.portrait-wrap{
+    background:#0a0a0a;
+    border:1px solid rgba(213,162,75,.32);
+  }
+  .photo-stage{height:75vh}
+  .photo-stage img{object-position:center center}
+  .image-stage{height:67vh}
+  .image-stage.tall{height:73vh}
+  .image-stage.wide{height:64vh}
+  .image-stage.contain img,.photo-stage.contain img{object-fit:contain}
+  .stage-full{position:absolute;inset:0;z-index:1}
+  .stage-full img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;opacity:.64}
+  .stage-full::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,3,3,.97) 0%,rgba(3,3,3,.82) 38%,rgba(3,3,3,.28) 100%)}
+  .stage-copy{position:relative;z-index:2;max-width:58vw}
+  .stage-photo-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:3.6vw;align-items:center;min-height:72vh}
+  .stage-photo-grid.reverse{grid-template-columns:.92fr 1.08fr}
+  .stage-big-image{height:76vh;border:1px solid rgba(213,162,75,.32);background:#0a0a0a;overflow:hidden}
+  .stage-big-image img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
+  .stage-big-image.contain img{object-fit:contain}
+  .stage-line{font-family:var(--serif-zh);font-size:min(7vw,12vh);line-height:1;font-weight:900;letter-spacing:-.04em;color:#fff8ee}
+  .fact-strip .fact,.word-row span,.metric-box,.yw-card{
+    background:rgba(255,255,255,.035);
+    border-color:rgba(213,162,75,.28);
+    color:#f7f0e6;
+  }
+  .metric-box .big,.yw-card .t,.three-words .word b{color:#fff8ee}
+  .metric-box .desc,.yw-card .d,.three-words .word span{color:#d8d1c7;opacity:.86}
+  .three-words .word{background:rgba(255,255,255,.035);border-top-color:#d5a24b}
+  .slide.light .full-photo::after,
+  .slide.dark .full-photo::after{
+    background:linear-gradient(90deg,rgba(3,3,3,.96),rgba(3,3,3,.7),rgba(3,3,3,.22))!important;
+  }
+  .full-photo img{opacity:.55}
+  .photo-stage,
+  .image-stage,
+  .stage-big-image,
+  .logo-stage,
+  .portrait-wrap,
+  .full-photo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .photo-stage img,
+  .image-stage img,
+  .stage-big-image img,
+  .logo-stage img,
+  .portrait-wrap img,
+  .stage-full img,
+  .full-photo img{
+    width:auto!important;
+    height:auto!important;
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain!important;
+    object-position:center center!important;
+  }
+  .full-photo{background:#030303}
+  body.light-bg #nav{background:rgba(0,0,0,.38)}
+  body.light-bg #nav .dot,#nav .dot{background:rgba(255,255,255,.22)}
+  body.light-bg #nav .dot.active,#nav .dot.active{background:#d5a24b}
+
+</style>
+</head>
+<body>
+<script>
+  (function(){
+    const KEY = 'guizang-ppt-low-power';
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stored = localStorage.getItem(KEY);
+    window.__lowPowerMode = stored === '1' || (stored === null && reduced);
+    function updateHint(){
+      const hint = document.getElementById('hint');
+      if(hint) hint.textContent = `← → 翻页 · B ${window.__lowPowerMode ? '动态' : '静态'} · ESC 索引`;
+    }
+    window.__setLowPowerMode = function(on, opts={}){
+      window.__lowPowerMode = !!on;
+      document.body.classList.toggle('low-power', window.__lowPowerMode);
+      if(opts.persist !== false) localStorage.setItem(KEY, window.__lowPowerMode ? '1' : '0');
+      if(window.__lowPowerMode && document.getAnimations){
+        document.getAnimations().forEach(a=>a.cancel());
+      }
+      updateHint();
+      dispatchEvent(new CustomEvent('ppt-low-power-change', {detail:{on:window.__lowPowerMode}}));
+      if(window.__playSlide) window.__playSlide(window.__currentSlideIndex || 0);
+    };
+    document.body.classList.toggle('low-power', window.__lowPowerMode);
+    addEventListener('DOMContentLoaded', updateHint, {once:true});
+  })();
+</script>
+
+<canvas id="bg-dark" class="bg"></canvas>
+<canvas id="bg-light" class="bg"></canvas>
+<div id="hint">← → 翻页 · B 静态 · ESC 索引</div>
+
+<div id="deck">
+
+<!-- ============================================================
+     SLIDES 插入区 · 在此处填充所有 <section class="slide ..."> 页面
+     每页模板参考 references/page-patterns.md
+     页面组件参考 references/components.md
+     ============================================================ -->
+
+<section class="slide hero dark">
+  <div class="chrome">
+    <div class="left"><span>Opening</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">01 / 17</div>
+  </div>
+  <div class="story-cover">
+    <div>
+      <div class="kicker" data-anim>新人分享 · 逐光团队</div>
+      <h1 class="story-title" data-anim>我为什么来泰康</h1>
+      <p class="story-copy" data-anim>杨威｜入司半年｜泰康 HWP｜AI 工作流实践者</p>
+      <div class="goldline small" data-anim>这不是一份标准履历，而是一个人重新选择长期事业的故事。</div>
+    </div>
+    <div class="photo-stage" data-anim><img src="images/01-portrait-stage.png" alt="杨威个人照片"></div>
+  </div>
+  <div class="foot"><div class="title">个人分享 · 泰康逐光</div><div>2026.06</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome">
+    <div class="left"><span>Who I Am</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">02 / 17</div>
+  </div>
+  <div class="stage-photo-grid">
+    <div>
+      <div class="kicker">先讲一个真实转折</div>
+      <h2 class="story-title small">我曾经也是“抗保分子”</h2>
+      <p class="story-copy">直到眼睛受伤，真正理赔过一次，我才明白保险不是话术。</p>
+      <div class="goldline small">人只有被风险撞过一次，才会知道保障不是可有可无。</div>
+    </div>
+    <div class="stage-big-image"><img src="images/03-eye-injury.jpg" alt="眼睛受伤理赔经历照片"></div>
+  </div>
+  <div class="foot"><div class="title">真实转折</div><div>02 / 17</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome">
+    <div class="left"><span>Before Taikang</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">03 / 17</div>
+  </div>
+  <div class="stage-photo-grid reverse">
+    <div class="stage-big-image contain"><img src="images/03-cby-venue-collage.jpg" alt="过往创业项目空间照片拼图"></div>
+    <div>
+      <div class="kicker">我的底色</div>
+      <h2 class="story-title small">武汉理工大学，连续创业者</h2>
+      <p class="story-copy">过去那些找路、扛结果、搭系统的经历，没有浪费。</p>
+      <div class="goldline small">换行业不是清零，是换一个地方重新发光。</div>
+    </div>
+  </div>
+  <div class="foot"><div class="title">过往经历</div><div>03 / 17</div></div>
+</section>
+
+<section class="slide hero light">
+  <div class="chrome">
+    <div class="left"><span>Why Taikang</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">04 / 17</div>
+  </div>
+  <div class="full-photo"><img src="images/04-aging-space.png" alt="养老空间意象图"></div>
+  <div class="over-photo">
+    <div class="kicker">为什么是泰康</div>
+    <h2 class="story-title small">我看到的不是一份销售工作，是未来家庭的养老问题</h2>
+    <p class="story-copy">人口老龄化、银发经济、医养结合，落到每个家庭，就是父母怎么老、钱够不够、人由谁照护。</p>
+    <div class="goldline small">选择泰康，是因为我看见这件事可以做得很深，也可以做得很久。</div>
+  </div>
+  <div class="foot"><div class="title">长期赛道</div><div>04 / 17</div></div>
+</section>
+
+<section class="slide hero dark">
+  <div class="chrome">
+    <div class="left"><span>First 90 Days</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">05 / 17</div>
+  </div>
+  <div class="yw-frame center">
+    <div class="kicker">前三个月</div>
+    <h2 class="story-title centered">说实话，我也慌过</h2>
+    <p class="story-copy" style="margin-inline:auto;text-align:center">每天听课、见人、看方案，信息很多，心里却不一定踏实。新人最怕的不是辛苦，是不知道下一步该怎么做。</p>
+    <div class="goldline centered small">新人最难的不是不努力，而是不知道努力该落在哪些动作上。</div>
+  </div>
+  <div class="foot"><div class="title">真实状态</div><div>05 / 17</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome">
+    <div class="left"><span>Mentor</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">06 / 17</div>
+  </div>
+  <div class="yw-frame">
+    <div class="kicker">这一章，只讲我的师傅</div>
+    <h2 class="story-title small">熊悦言师傅帮我把一团乱麻，拆成能做的事</h2>
+    <div class="yw-grid-3">
+      <div class="yw-card"><div class="t">先稳心态</div><div class="d">她让我知道，迷茫不是失败，新人阶段先别乱。</div></div>
+      <div class="yw-card"><div class="t">再拆动作</div><div class="d">目标、名单、邀约、面谈、复盘，一步一步来。</div></div>
+      <div class="yw-card"><div class="t">关键时刻托住我</div><div class="d">幸福有约社区单，也是她鼓励我继续回到客户真实需求。</div></div>
+    </div>
+    <div class="goldline small">一个好师傅，不是替你走路，而是在你怀疑自己时帮你站稳。</div>
+  </div>
+  <div class="foot"><div class="title">感谢熊悦言师傅</div><div>06 / 17</div></div>
+</section>
+
+<section class="slide hero light">
+  <div class="chrome">
+    <div class="left"><span>AI Desk</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">07 / 17</div>
+  </div>
+  <div class="ai-big reverse">
+    <div class="image-stage wide contain"><img src="images/10-ai-two-phones.png" alt="AI 工作流双手机截图"></div>
+    <div>
+      <div class="kicker">AI 对我到底有什么用</div>
+      <h2 class="ai-title">它不是噱头，是我的第二张工作台</h2>
+      <p class="ai-note">我没有让 AI 替我做人情、替我成交。它真正帮我的是：记住、整理、提醒、复盘，把服务动作变得更稳定。</p>
+      <div class="goldline small">AI 没有替我做人，它只是帮我把该做的事做得更稳。</div>
+    </div>
+  </div>
+  <div class="foot"><div class="title">AI 工作台</div><div>07 / 17</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome">
+    <div class="left"><span>AI Use 01</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">08 / 17</div>
+  </div>
+  <div class="ai-big">
+    <div>
+      <div class="kicker">AI 应用 01</div>
+      <h2 class="ai-title">客户跟进，不靠脑子硬记</h2>
+      <p class="ai-note">每天谁要回访、谁要补资料、谁要继续解释，我让 AI 先帮我整理出来。人负责温度，系统负责不遗漏。</p>
+      <div class="goldline small">真正有用的工具，是让客户少被遗漏一次。</div>
+    </div>
+    <div><div class="image-stage tall contain"><img src="images/11-ai-customer-dashboard.jpg" alt="客户跟进看板截图"></div><div class="image-caption">Customer follow-up dashboard</div></div>
+  </div>
+  <div class="foot"><div class="title">客户经营</div><div>08 / 17</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome">
+    <div class="left"><span>AI Use 02</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">09 / 17</div>
+  </div>
+  <div class="ai-big reverse">
+    <div><div class="image-stage tall contain"><img src="images/12-ai-automation.png" alt="自动化任务截图"></div><div class="image-caption">Automation tasks</div></div>
+    <div>
+      <div class="kicker">AI 应用 02</div>
+      <h2 class="ai-title">把重复动作交给系统，把注意力留给客户</h2>
+      <p class="ai-note">公众号、知识卡片、客户复盘、资料整理，很多事情不是难，而是容易断。自动化的价值，是让它们每天继续跑。</p>
+      <div class="goldline small">工作流不是概念，能连续跑起来才算落地。</div>
+    </div>
+  </div>
+  <div class="foot"><div class="title">自动化任务</div><div>09 / 17</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome">
+    <div class="left"><span>AI Use 03</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">10 / 17</div>
+  </div>
+  <div class="ai-big">
+    <div>
+      <div class="kicker">AI 应用 03</div>
+      <h2 class="ai-title">资料库不是文件夹，是我的客户服务弹药库</h2>
+      <p class="ai-note">保险知识、养老问题、客户常问的问题，沉淀下来之后，下次就不是从零开始。</p>
+      <div class="goldline small">能沉淀的经验，才会变成下一次服务客户的底气。</div>
+    </div>
+    <div><div class="image-stage tall contain"><img src="images/13-ai-library.png" alt="资料库截图"></div><div class="image-caption">Knowledge asset library</div></div>
+  </div>
+  <div class="foot"><div class="title">资料沉淀</div><div>10 / 17</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome">
+    <div class="left"><span>AI Use 04</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">11 / 17</div>
+  </div>
+  <div class="ai-big reverse">
+    <div><div class="image-stage tall contain"><img src="images/14-ai-getnote.png" alt="Get 笔记转内容截图"></div><div class="image-caption">Get note to content</div></div>
+    <div>
+      <div class="kicker">AI 应用 04</div>
+      <h2 class="ai-title">把听到的、看到的，变成客户听得懂的内容</h2>
+      <p class="ai-note">我会把客户真实困惑、培训笔记、行业信息，整理成更容易理解的文章、卡片和沟通材料。</p>
+      <div class="goldline small">内容不是为了显得专业，是为了让客户少一点误解。</div>
+    </div>
+  </div>
+  <div class="foot"><div class="title">内容生产</div><div>11 / 17</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome">
+    <div class="left"><span>AI Use 05</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">12 / 17</div>
+  </div>
+  <div class="ai-big">
+    <div>
+      <div class="kicker">AI 应用 05</div>
+      <h2 class="ai-title">复杂的保险知识，要讲成人能听懂的话</h2>
+      <p class="ai-note">AI 帮我把复杂问题拆成图，但真正的标准是：客户看完能不能明白下一步该怎么判断。</p>
+      <div class="goldline small">专业不是把话讲复杂，专业是把复杂问题讲清楚。</div>
+    </div>
+    <div><div class="image-stage tall contain"><img src="images/15-ai-knowledge-card.png" alt="保险知识图截图"></div><div class="image-caption">Knowledge card workflow</div></div>
+  </div>
+  <div class="foot"><div class="title">知识翻译</div><div>12 / 17</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome">
+    <div class="left"><span>First Results</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">13 / 17</div>
+  </div>
+  <div class="stage-photo-grid reverse">
+    <div class="stage-big-image contain"><img src="images/09-newcomer-king.png" alt="新人王照片"></div>
+    <div>
+      <div class="kicker">第三个月</div>
+      <h2 class="story-title small">我第一次觉得：这条路能跑通</h2>
+      <p class="story-copy">公司新人王，幸福有约社区单。对我来说，这不是炫耀，是确认方法开始生效。</p>
+      <div class="goldline small">结果不是突然来的，是每天把该做的事做扎实。</div>
+    </div>
+  </div>
+  <div class="foot"><div class="title">真实结果</div><div>13 / 17</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome">
+    <div class="left"><span>My Position</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">14 / 17</div>
+  </div>
+  <div class="story-cover">
+    <div>
+      <div class="kicker">我慢慢找到的位置</div>
+      <h2 class="story-title small">连续创业者 + AI 工作流实践者 + 泰康 HWP</h2>
+      <p class="story-copy">我不需要变成别人。我可以把过去的创业经验、学习能力、AI 工具能力，放到保险和养老服务里，走出自己的路。</p>
+      <div class="goldline small">定位不是想出来的，是在真实服务客户的过程中长出来的。</div>
+    </div>
+    <div class="photo-stage contain"><img src="images/14-position-ai-profile.png" alt="杨威 AI 工作流保险顾问形象图"></div>
+  </div>
+  <div class="foot"><div class="title">个人定位</div><div>14 / 17</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome">
+    <div class="left"><span>Team</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">15 / 17</div>
+  </div>
+  <div class="story-cover">
+    <div>
+      <div class="kicker">逐光团队给我的感觉</div>
+      <h2 class="story-title small">新人能走得快，是因为关键几步有人愿意扶你</h2>
+      <p class="story-copy">感谢陈亮主管、袁晴总监在客户洽谈、经验积累、团队方向和资源上的支持。逐光对我来说，是一个有爱、有梦想，也愿意托举新人的团队。</p>
+      <div class="goldline small">一个团队最打动人的，不是口号多响，而是你真的能感觉到它在托举人。</div>
+    </div>
+    <div class="logo-stage"><img src="images/17-zhuguang-taikang-logo.jpg" alt="泰康逐光团队标识"></div>
+  </div>
+  <div class="foot"><div class="title">逐光团队</div><div>15 / 17</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome">
+    <div class="left"><span>Transfer</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">16 / 17</div>
+  </div>
+  <div class="yw-frame">
+    <div class="kicker">给还在观望的朋友</div>
+    <h2 class="story-title small">不是让你变成别人，<br>而是让你的过去重新发光</h2>
+    <div class="yw-grid-3">
+      <div class="yw-card"><div class="t">创业能力</div><div class="d">从找项目，变成找客户真正的问题。</div></div>
+      <div class="yw-card"><div class="t">经营能力</div><div class="d">从经营生意，变成经营信任和长期关系。</div></div>
+      <div class="yw-card"><div class="t">AI 能力</div><div class="d">从效率工具，变成稳定服务客户的工作台。</div></div>
+    </div>
+    <div class="goldline small">你不用推翻过去，你要做的是把过去放进一个更大的服务场景。</div>
+  </div>
+  <div class="foot"><div class="title">能力迁移</div><div>16 / 17</div></div>
+</section>
+
+<section class="slide hero dark">
+  <div class="chrome">
+    <div class="left"><span>Closing</span><span class="sep"></span><span>杨威 · 泰康HWP</span></div>
+    <div class="right">17 / 17</div>
+  </div>
+  <div class="stage-photo-grid">
+    <div>
+      <div class="kicker">最后想说</div>
+      <h2 class="story-title small">可大、可久、可敬</h2>
+      <p class="story-copy">前天听梁正龙老师讲这句话，我特别有感触。</p>
+      <div class="goldline small">把过去带进来，把保险做成自己的路。</div>
+    </div>
+    <div class="stage-big-image contain"><img src="images/18-final-card.png" alt="杨威个人形象图"></div>
+  </div>
+  <div class="foot"><div class="title">收束</div><div>17 / 17</div></div>
+</section>
+
+</div>
+
+<div id="nav"></div>
+
+<script>
+/* =============== WebGL 双背景 ===============
+   深色页：Holographic Dispersion（全息色散 · 钛金暗流）—— 彩虹微扰、鼠标径向涟漪
+   浅色页：Spiral Vortex（旋转涡流 · 银色珍珠）—— domain-warp 流动、无中心
+   修改风格请参考 references/webgl-backgrounds.md
+*/
+const VS = `attribute vec2 position;void main(){gl_Position=vec4(position,0.0,1.0);}`;
+
+const FS_DARK = `precision highp float;
+uniform vec2 u_resolution;uniform float u_time;uniform vec2 u_mouse;
+vec3 palette(float t,vec3 a,vec3 b,vec3 c,vec3 d){return a+b*cos(6.28318*(c*t+d));}
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_resolution.xy;
+  vec2 p=uv*2.0-1.0;p.x*=u_resolution.x/u_resolution.y;
+  vec2 m=u_mouse*2.0-1.0;m.x*=u_resolution.x/u_resolution.y;
+  float md=length(p-m);
+  float mr=sin(md*15.0-u_time*4.0)*exp(-md*3.0);p+=mr*0.08;
+  vec2 p0=p;
+  for(float i=1.0;i<4.0;i++){
+    p.x+=0.1/i*sin(i*3.0*p.y+u_time*0.4)+0.05;
+    p.y+=0.1/i*cos(i*2.0*p.x+u_time*0.3)-0.05;
+  }
+  float r=length(p);float ang=atan(p.y,p.x);
+  vec3 a=vec3(0.12,0.12,0.13);
+  vec3 b=vec3(0.03,0.04,0.05);
+  vec3 c=vec3(1.0,1.0,1.0);
+  vec3 d=vec3(0.1,0.2,0.4);
+  vec3 col=palette(r*1.5+p0.x*0.5+u_time*0.1,a,b,c,d);
+  float disp=sin(r*25.0-u_time*1.5+ang*2.0)*0.5+0.5;
+  col+=vec3(disp*0.015,disp*0.01,disp*0.02);
+  float hi=pow(sin(p.x*4.0+p.y*3.0+u_time)*0.5+0.5,8.0);
+  col+=hi*0.08;
+  vec3 base=vec3(0.05,0.05,0.06);
+  col=mix(base,col,0.85);
+  gl_FragColor=vec4(col,1.0);
+}`;
+
+const FS_LIGHT = `precision highp float;
+uniform vec2 u_resolution;uniform float u_time;uniform vec2 u_mouse;
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){
+  vec2 i=floor(p),f=fract(p);
+  float a=hash(i),b=hash(i+vec2(1,0));
+  float c=hash(i+vec2(0,1)),d=hash(i+vec2(1,1));
+  vec2 u=f*f*(3.0-2.0*f);
+  return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
+}
+float fbm(vec2 p){
+  float v=0.0,a=0.5;
+  mat2 m=mat2(0.80,0.60,-0.60,0.80);
+  for(int i=0;i<5;i++){v+=a*noise(p);p=m*p*2.02;a*=0.5;}
+  return v;
+}
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_resolution.xy;
+  vec2 p=uv;p.x*=u_resolution.x/u_resolution.y;
+  vec2 m=u_mouse;m.x*=u_resolution.x/u_resolution.y;
+  vec2 md=p-m;float dl=length(md);
+  p+=normalize(md+vec2(0.0001))*exp(-dl*5.0)*0.03;
+  vec2 q=vec2(fbm(p*1.8+u_time*0.07),fbm(p*1.8+vec2(5.2,1.3)+u_time*0.06));
+  vec2 r=vec2(fbm(p*2.0+q*1.3+vec2(1.7,9.2)+u_time*0.05),
+              fbm(p*2.0+q*1.3+vec2(8.3,2.8)+u_time*0.04));
+  float f=fbm(p*2.2+r*1.5);
+  vec3 silverDark=vec3(0.86,0.85,0.84);
+  vec3 paper=vec3(0.955,0.945,0.925);
+  vec3 col=mix(silverDark,paper,f);
+  float ph=r.x*2.2+u_time*0.35;
+  col+=vec3(0.78,0.62,0.92)*sin(ph)*0.055;
+  col+=vec3(0.55,0.72,0.95)*sin(ph*0.8+2.0)*0.05;
+  float hl=smoothstep(0.48,0.92,f);
+  col+=hl*0.06;
+  gl_FragColor=vec4(col,1.0);
+}`;
+
+const mouse={x:0.5,y:0.5};
+addEventListener('mousemove',e=>{mouse.x=e.clientX/innerWidth;mouse.y=e.clientY/innerHeight});
+
+function bootGL(canvasId, fsSrc){
+  const canvas=document.getElementById(canvasId);
+  const gl=canvas.getContext('webgl',{alpha:false,antialias:true});
+  if(!gl) return ()=>false;
+  const mk=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh};
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mk(gl.VERTEX_SHADER,VS));
+  gl.attachShader(prog,mk(gl.FRAGMENT_SHADER,fsSrc));
+  gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+  const pos=gl.getAttribLocation(prog,'position');
+  gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
+  const lRes=gl.getUniformLocation(prog,'u_resolution');
+  const lT=gl.getUniformLocation(prog,'u_time');
+  const lM=gl.getUniformLocation(prog,'u_mouse');
+  const resize=()=>{
+    const d=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=innerWidth*d;canvas.height=innerHeight*d;
+    gl.viewport(0,0,canvas.width,canvas.height);
+  };
+  addEventListener('resize',resize);resize();
+  return (tSec)=>{
+    gl.uniform2f(lRes,canvas.width,canvas.height);
+    gl.uniform1f(lT,tSec);
+    gl.uniform2f(lM,mouse.x,1-mouse.y);
+    gl.drawArrays(gl.TRIANGLES,0,6);
+    return true;
+  };
+}
+let drawDark=null, drawLight=null, glRAF=0, glT0=Date.now();
+function startGL(){
+  if(window.__lowPowerMode || glRAF) return;
+  if(!drawDark) drawDark=bootGL('bg-dark',FS_DARK);
+  if(!drawLight) drawLight=bootGL('bg-light',FS_LIGHT);
+  glT0=Date.now();
+  function loop(){
+    if(window.__lowPowerMode){glRAF=0;return;}
+    const t=(Date.now()-glT0)/1000;
+    drawDark(t);drawLight(t);
+    glRAF=requestAnimationFrame(loop);
+  }
+  glRAF=requestAnimationFrame(loop);
+}
+function stopGL(){
+  if(glRAF) cancelAnimationFrame(glRAF);
+  glRAF=0;
+}
+startGL();
+addEventListener('ppt-low-power-change', e=>{e.detail.on ? stopGL() : startGL();});
+
+// =============== 导航（翻页 / 圆点 / 键盘 / 滚轮 / 触屏） ===============
+const deck=document.getElementById('deck');
+const slides=deck.querySelectorAll('.slide');
+const nav=document.getElementById('nav');
+let idx=0,total=slides.length,lock=false;
+
+// 关键：矫正 deck 宽度为 total * 100vw，否则翻页会错位
+deck.style.width=(total*100)+'vw';
+
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='dot';b.dataset.i=i;b.setAttribute('aria-label','Page '+(i+1));
+  b.onclick=()=>go(i);
+  nav.appendChild(b);
+});
+
+function go(n){
+  if(lock)return;
+  idx=Math.max(0,Math.min(total-1,n));
+  window.__currentSlideIndex = idx;
+  deck.style.transform=`translateX(${-idx*100}vw)`;
+  nav.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  /* 主题切换：优先读 data-theme，其次从 class（light/dark）推断 */
+  const el=slides[idx];
+  const th=el.dataset.theme || (el.classList.contains('light')?'light':(el.classList.contains('dark')?'dark':'dark'));
+  document.body.classList.toggle('light-bg',th==='light');
+  /* 动效：翻页过渡中段触发当前页的入场动画（由 motion-boot 注册） */
+  if(window.__playSlide) setTimeout(()=>window.__playSlide(idx), 450);
+  lock=true;setTimeout(()=>lock=false,700);
+}
+
+/* =============== ESC 索引视图 =============== */
+let overviewOn=false;
+const ov=document.createElement('div');
+ov.id='overview';
+ov.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(var(--ink-rgb),.92);backdrop-filter:blur(12px);display:none;overflow-y:auto;padding:4vh 4vw';
+document.body.appendChild(ov);
+
+function buildOverview(){
+  ov.innerHTML='';
+  const grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:2vh 1.6vw;max-width:90vw;margin:0 auto';
+  slides.forEach((s,i)=>{
+    const card=document.createElement('div');
+    card.style.cssText='cursor:pointer;border-radius:6px;overflow:hidden;border:2px solid '+(i===idx?'rgba(var(--paper-rgb),.8)':'rgba(var(--paper-rgb),.15)')+';transition:border-color .2s';
+    card.onmouseenter=()=>card.style.borderColor='rgba(var(--paper-rgb),.6)';
+    card.onmouseleave=()=>card.style.borderColor=i===idx?'rgba(var(--paper-rgb),.8)':'rgba(var(--paper-rgb),.15)';
+    const wrap=document.createElement('div');
+    wrap.style.cssText='width:100%;aspect-ratio:16/9;overflow:hidden;position:relative;pointer-events:none;background:'+(s.classList.contains('light')?'var(--paper)':'var(--ink)');
+    const clone=s.cloneNode(true);
+    clone.style.cssText='width:100vw;height:100vh;transform:scale('+(1/4.5)+');transform-origin:top left;position:absolute;top:0;left:0;pointer-events:none';
+    wrap.appendChild(clone);
+    const label=document.createElement('div');
+    label.style.cssText='padding:6px 10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper);opacity:.7';
+    label.textContent=(i+1)+' / '+total;
+    card.appendChild(wrap);
+    card.appendChild(label);
+    card.onclick=()=>{toggleOverview();go(i)};
+    grid.appendChild(card);
+  });
+  ov.appendChild(grid);
+}
+
+function toggleOverview(){
+  overviewOn=!overviewOn;
+  if(overviewOn){buildOverview();ov.style.display='block';}
+  else{ov.style.display='none';}
+}
+
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'){e.preventDefault();toggleOverview();return;}
+  if(e.key && e.key.toLowerCase()==='b' && !e.metaKey && !e.ctrlKey && !e.altKey){
+    e.preventDefault();
+    window.__setLowPowerMode(!window.__lowPowerMode);
+    return;
+  }
+  if(overviewOn)return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '||e.key==='ArrowDown'){
+    if(window.__pipeAdvance && window.__pipeAdvance()) return;
+    go(idx+1);
+    return;
+  }
+  if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='ArrowUp')go(idx-1);
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(total-1);
+});
+
+let wheelTO=null,wheelAcc=0;
+addEventListener('wheel',e=>{
+  wheelAcc+=e.deltaY+e.deltaX;
+  if(Math.abs(wheelAcc)>50){
+    if(wheelAcc>0 && window.__pipeAdvance && window.__pipeAdvance()){
+      wheelAcc=0;
+    }else{
+      go(idx+(wheelAcc>0?1:-1));wheelAcc=0;
+    }
+  }
+  clearTimeout(wheelTO);wheelTO=setTimeout(()=>wheelAcc=0,150);
+},{passive:true});
+
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=(e.changedTouches[0].clientX-tx);
+  const dy=(e.changedTouches[0].clientY-ty);
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){
+    if(dx<0 && window.__pipeAdvance && window.__pipeAdvance()) return;
+    go(idx+(dx<0?1:-1));
+  }
+},{passive:true});
+
+go(0);
+</script>
+<!-- ============ 内置轻量动效 ============
+     不依赖本地模块或 CDN，确保直接打开 index.html 时不会出现 file:// 脚本拦截。
+-->
+<script>
+(function(){
+  const slides = [...document.querySelectorAll('#deck > .slide')];
+  const EASE = 'cubic-bezier(.22,1,.36,1)';
+  let pipeStep = -1;
+  let lastIdx = window.__currentSlideIndex || 0;
+
+  document.body.classList.add('motion-ready');
+
+  function clearInline(slide){
+    slide.querySelectorAll('[data-anim]').forEach(el=>{
+      el.style.transition = 'none';
+      el.style.opacity = '';
+      el.style.transform = '';
+    });
+  }
+
+  function revealStatic(slide){
+    slide.querySelectorAll('[data-anim]').forEach(el=>{
+      el.style.transition = 'none';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }
+
+  function animateIn(elements, opts={}){
+    const axis = opts.axis || 'y';
+    const distance = opts.distance ?? 16;
+    const startDelay = opts.startDelay ?? 0.15;
+    const stepDelay = opts.stepDelay ?? 0.1;
+    const duration = opts.duration ?? 0.75;
+
+    elements.forEach((el, i)=>{
+      const offset = axis === 'x' ? `translateX(${distance}px)` : `translateY(${distance}px)`;
+      el.style.transition = 'none';
+      el.style.opacity = '0';
+      el.style.transform = offset;
+      requestAnimationFrame(()=>{
+        const delay = startDelay + i * stepDelay;
+        el.style.transition = `opacity ${duration}s ${EASE} ${delay}s, transform ${duration}s ${EASE} ${delay}s`;
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+    });
+  }
+
+  function playSlide(i){
+    const slide = slides[i];
+    if(!slide) return;
+    lastIdx = i;
+    const recipe = slide.dataset.animate || (slide.classList.contains('hero') ? 'hero' : 'cascade');
+
+    if(window.__lowPowerMode){
+      revealStatic(slide);
+      return;
+    }
+
+    clearInline(slide);
+
+    if(recipe === 'pipeline'){
+      pipeStep = -1;
+      slide.querySelectorAll('[data-anim]').forEach(el=>{
+        el.style.transition = 'none';
+        el.style.opacity = '0.15';
+        el.style.transform = 'none';
+      });
+      return;
+    }
+
+    const all = [...slide.querySelectorAll('[data-anim]')];
+    if(!all.length) return;
+
+    if(recipe === 'directional'){
+      const lefts  = all.filter(el=>el.dataset.anim==='left');
+      const divs   = all.filter(el=>el.dataset.anim==='divider');
+      const rights = all.filter(el=>el.dataset.anim==='right');
+      const others = all.filter(el=>!['left','right','divider'].includes(el.dataset.anim));
+      animateIn(others, {distance:12, duration:.6});
+      animateIn(lefts, {axis:'x', distance:-24, startDelay:.35, stepDelay:.05, duration:.8});
+      animateIn(divs, {distance:0, startDelay:.9, stepDelay:.05, duration:.5});
+      animateIn(rights, {axis:'x', distance:24, startDelay:1, stepDelay:.05, duration:.8});
+      return;
+    }
+
+    if(recipe === 'quote'){
+      const lines = all.filter(el=>el.dataset.anim==='line');
+      const others = all.filter(el=>el.dataset.anim!=='line');
+      animateIn(others, {distance:8, duration:.6, stepDelay:.12});
+      animateIn(lines, {distance:10, startDelay:.5, stepDelay:.55, duration:.8});
+      return;
+    }
+
+    if(recipe === 'hero'){
+      animateIn(all, {distance:14, duration:.9, stepDelay:.16});
+      return;
+    }
+
+    animateIn(all);
+  }
+
+  function pipeAdvance(){
+    if(window.__lowPowerMode) return false;
+    const slide = slides[lastIdx];
+    if(!slide || slide.dataset.animate !== 'pipeline') return false;
+    const steps  = [...slide.querySelectorAll('[data-anim="step"]')];
+    const arrows = [...slide.querySelectorAll('[data-anim="arrow"]')];
+    if(pipeStep >= steps.length - 1) return false;
+    pipeStep++;
+    animateIn([steps[pipeStep]], {distance:8, startDelay:0, duration:.5});
+    if(pipeStep > 0 && arrows[pipeStep-1]){
+      arrows[pipeStep-1].style.opacity = '.7';
+    }
+    return true;
+  }
+
+  window.__playSlide = playSlide;
+  window.__pipeAdvance = pipeAdvance;
+  playSlide(0);
+})();
+</script>
+</body>
+</html>
